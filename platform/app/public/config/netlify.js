@@ -14,6 +14,9 @@ window.config = {
   groupEnabledModesFirst: true,
   // filterQueryParam: false,
   defaultDataSourceName: 'ohif',
+  investigationalUseDialog: {
+    option: 'never',
+  },
   dataSources: [
     {
       namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
