@@ -1,6 +1,6 @@
 /** @type {AppTypes.Config} */
 window.config = {
-  routerBasename: "/ohif-viewer/",
+  routerBasename: '/ohif-viewer/',
   showStudyList: true,
   extensions: [],
   modes: [],
@@ -9,20 +9,20 @@ window.config = {
   showCPUFallbackMessage: true,
   showLoadingIndicator: true,
   strictZSpacingForVolumeViewport: true,
-  defaultDataSourceName: "dicomweb",
+  defaultDataSourceName: 'dicomweb',
   dataSources: [
     {
-      namespace: "@ohif/extension-default.dataSourcesModule.dicomweb",
-      sourceName: "dicomweb",
+      namespace: '@ohif/extension-default.dataSourcesModule.dicomweb',
+      sourceName: 'dicomweb',
       configuration: {
-        friendlyName: "Dcm4chee Server",
-        name: "Dcm4chee",
-        wadoUriRoot: "http://10.1.10.218/pacs",
-        qidoRoot: "http://10.1.10.218/pacs",
-        wadoRoot: "http://10.1.10.218/pacs",
+        friendlyName: 'Dcm4chee Server',
+        name: 'Dcm4chee',
+        wadoUriRoot: 'http://192.168.0.253/pacs',
+        qidoRoot: 'http://192.168.0.253/pacs',
+        wadoRoot: 'http://192.168.0.253/pacs',
         qidoSupportsIncludeField: false,
-        imageRendering: "wadors",
-        thumbnailRendering: "wadors",
+        imageRendering: 'wadors',
+        thumbnailRendering: 'wadors',
         dicomUploadEnabled: true,
         omitQuotationForMultipartRequest: true,
       },
