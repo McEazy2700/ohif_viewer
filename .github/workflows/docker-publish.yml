@@ -26,8 +26,7 @@ jobs:
 
           docker compose -f $COMPOSE_FILE build --no-cache ohif_viewer
           
-          IMAGE_ID=$(docker images -q slate_ohif_viewer)
-          docker tag $IMAGE_ID $IMAGE_TAG
+          docker tag webapp:latest $IMAGE_TAG
           
           docker push $IMAGE_TAG
 
