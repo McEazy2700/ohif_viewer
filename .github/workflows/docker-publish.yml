@@ -1,4 +1,4 @@
-name: Build and Push Docker image
+name: Build and Push OHIF Viewer
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Login to Docker Hub
@@ -18,16 +18,18 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: Build and Push OHIF Viewer Image
+        run: |
+          COMPOSE_FILE="platform/app/.recipes/Nginx-Dcm4chee-Keycloak/docker-compose.yml"
+          IMAGE_TAG="${{ secrets.DOCKERHUB_USERNAME }}/slate-ohif-webapp:latest"
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/slate-ohif-webapp:latest
+          docker compose -f $COMPOSE_FILE build --no-cache ohif_viewer
+          
+          IMAGE_ID=$(docker images -q slate_ohif_viewer)
+          docker tag $IMAGE_ID $IMAGE_TAG
+          
+          docker push $IMAGE_TAG
 
       - name: Logout
         run: docker logout
