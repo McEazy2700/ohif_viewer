@@ -9,7 +9,6 @@ import HeaderPatientInfo from './HeaderPatientInfo';
 import { PatientInfoVisibility } from './HeaderPatientInfo/HeaderPatientInfo';
 import { preserveQueryParameters } from '@ohif/app';
 import { Types } from '@ohif/core';
-import { performSimpleLogout } from '@ohif/app/src/utils/keycloakLogout';
 
 function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }>) {
   const { servicesManager, extensionManager, commandsManager } = useSystem();
@@ -74,12 +73,27 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
       title: t('Header:Logout'),
       icon: 'power-off',
       onClick: async () => {
+        // Clear all cookies
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+          const eqPos = cookie.indexOf("=");
+          const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+          if (name) {
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+          }
+        }
+
+        // Clear all storage
+        localStorage.clear();
+        sessionStorage.clear();
+
         if (appConfig.oidc && appConfig.oidc.length > 0) {
           // For OIDC/Keycloak logout, use the OIDC route
           navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
         } else {
-          // Simple logout without OIDC
-          performSimpleLogout();
+          // Simple logout - redirect to home
+          window.location.href = '/';
         }
       },
     },

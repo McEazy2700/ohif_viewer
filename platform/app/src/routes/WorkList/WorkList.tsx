@@ -11,7 +11,6 @@ import filtersMeta from './filtersMeta.js';
 import { useAppConfig } from '@state';
 import { useDebounce, useSearchParams } from '../../hooks';
 import { utils, Types as coreTypes } from '@ohif/core';
-import { performSimpleLogout } from '../../utils/keycloakLogout';
 
 import {
   StudyListExpandedRow,
@@ -510,12 +509,27 @@ function WorkList({
     icon: 'power-off',
     title: t('Header:Logout'),
     onClick: () => {
+      // Clear all cookies
+      const cookies = document.cookie.split(";");
+      for (let cookie of cookies) {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        if (name) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+        }
+      }
+
+      // Clear all storage
+      localStorage.clear();
+      sessionStorage.clear();
+
       if (appConfig.oidc && appConfig.oidc.length > 0) {
         // For OIDC/Keycloak logout, use the OIDC route
         navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
       } else {
-        // Simple logout without OIDC
-        performSimpleLogout();
+        // Simple logout - redirect to home
+        window.location.href = '/';
       }
     },
   });
