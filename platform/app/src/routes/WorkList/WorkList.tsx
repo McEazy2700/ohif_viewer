@@ -11,6 +11,7 @@ import filtersMeta from './filtersMeta.js';
 import { useAppConfig } from '@state';
 import { useDebounce, useSearchParams } from '../../hooks';
 import { utils, Types as coreTypes } from '@ohif/core';
+import { performSimpleLogout } from '../../utils/keycloakLogout';
 
 import {
   StudyListExpandedRow,
@@ -504,15 +505,20 @@ function WorkList({
     },
   ];
 
-  if (appConfig.oidc) {
-    menuOptions.push({
-      icon: 'power-off',
-      title: t('Header:Logout'),
-      onClick: () => {
+  // Add logout button (works with or without OIDC)
+  menuOptions.push({
+    icon: 'power-off',
+    title: t('Header:Logout'),
+    onClick: () => {
+      if (appConfig.oidc && appConfig.oidc.length > 0) {
+        // For OIDC/Keycloak logout, use the OIDC route
         navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
-      },
-    });
-  }
+      } else {
+        // Simple logout without OIDC
+        performSimpleLogout();
+      }
+    },
+  });
 
   const LoadingIndicatorProgress = customizationService.getCustomization(
     'ui.loadingIndicatorProgress'

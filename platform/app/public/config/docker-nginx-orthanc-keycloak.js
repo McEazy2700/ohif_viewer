@@ -5,6 +5,18 @@ window.config = {
   modes: [],
   customizationService: {},
   showStudyList: true,
+  oidc: [
+    {
+      authority: 'http://localhost:8080/realms/ohif',
+      client_id: 'ohif-viewer',
+      redirect_uri: '/callback',
+      response_type: 'code',
+      scope: 'openid profile email',
+      post_logout_redirect_uri: '/logout-redirect.html',
+      automaticSilentRenew: true,
+      revokeAccessTokenOnSignout: true,
+    },
+  ],
   maxNumberOfWebWorkers: 3,
   showWarningMessageForCrossOrigin: true,
   showCPUFallbackMessage: true,

@@ -54,8 +54,14 @@ function LogoutComponent(props) {
   localStorage.setItem('signoutEvent', 'true');
   const location = useLocation();
   const query = new URLSearchParams(location.search);
+
+  // Clear additional OHIF-specific storage
+  localStorage.removeItem('ohif-redirect-to');
+  sessionStorage.clear();
+
+  // Perform proper Keycloak logout with UserManager
   userManager.signoutRedirect({
-    post_logout_redirect_uri: query.get('redirect_uri'),
+    post_logout_redirect_uri: query.get('redirect_uri') || window.location.origin + '/logout-redirect.html',
   });
   return null;
 }

@@ -9,6 +9,7 @@ import HeaderPatientInfo from './HeaderPatientInfo';
 import { PatientInfoVisibility } from './HeaderPatientInfo/HeaderPatientInfo';
 import { preserveQueryParameters } from '@ohif/app';
 import { Types } from '@ohif/core';
+import { performSimpleLogout } from '@ohif/app/src/utils/keycloakLogout';
 
 function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }>) {
   const { servicesManager, extensionManager, commandsManager } = useSystem();
@@ -69,17 +70,20 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
             UserPreferencesModal?.containerClassName ?? 'flex max-w-4xl p-6 flex-col',
         }),
     },
-  ];
-
-  if (appConfig.oidc) {
-    menuOptions.push({
+    {
       title: t('Header:Logout'),
       icon: 'power-off',
       onClick: async () => {
-        navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
+        if (appConfig.oidc && appConfig.oidc.length > 0) {
+          // For OIDC/Keycloak logout, use the OIDC route
+          navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
+        } else {
+          // Simple logout without OIDC
+          performSimpleLogout();
+        }
       },
-    });
-  }
+    },
+  ];
 
   return (
     <Header
