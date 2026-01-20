@@ -531,50 +531,13 @@ function WorkList({
 		title: t("Header:Logout"),
 		onClick: () => {
 			userAuthenticationService.reset();
-			console.log("Logout clicked");
-
-			// Clear all cookies more thoroughly
-			const cookies = document.cookie.split(";");
-			for (const cookie of cookies) {
-				const eqPos = cookie.indexOf("=");
-				const name =
-					eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
-
-				if (name) {
-					// Try multiple domain and path combinations to ensure deletion
-					const domain = window.location.hostname;
-					const domains = [domain, `.${domain}`];
-					const paths = ["/", ""];
-
-					domains.forEach((d) => {
-						paths.forEach((p) => {
-							document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${p};`;
-							document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${p}; domain=${d};`;
-						});
-					});
-				}
-			}
-
-			// Clear all storage
 			localStorage.clear();
 			sessionStorage.clear();
+			const proxyLogoutUrl =
+				"/oauth2/sign_out?rd=" +
+				encodeURIComponent(window.location.origin + "/");
 
-			// Optional: Clear IndexedDB if you're using it
-			if (window.indexedDB) {
-				indexedDB.databases().then((dbs) => {
-					dbs.forEach((db) => indexedDB.deleteDatabase(db.name));
-				});
-			}
-
-			if (appConfig.oidc && appConfig.oidc.length > 0) {
-				// For OIDC/Keycloak logout
-				navigate(
-					`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`,
-				);
-			} else {
-				// Simple logout - use window.location.replace for better cleanup
-				window.location.replace("/");
-			}
+			window.location.href = proxyLogoutUrl;
 		},
 	});
 
