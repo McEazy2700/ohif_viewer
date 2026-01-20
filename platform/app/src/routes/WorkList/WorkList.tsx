@@ -529,8 +529,8 @@ function WorkList({
 	menuOptions.push({
 		icon: "power-off",
 		title: t("Header:Logout"),
-		onClick: () => {
-			const user = userAuthenticationService.getUser() as any;
+		onClick: async () => {
+			const user = (await userAuthenticationService.getUser()) as any;
 			console.log(user);
 			// const idToken = user?.id_token;
 			//
