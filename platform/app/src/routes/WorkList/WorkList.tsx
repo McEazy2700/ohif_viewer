@@ -531,31 +531,28 @@ function WorkList({
 		title: t("Header:Logout"),
 		onClick: async () => {
 			const user = (await userAuthenticationService.getUser()) as any;
-			console.log(user);
-			// const idToken = user?.id_token;
-			//
-			// userAuthenticationService.reset();
-			// localStorage.clear();
-			// sessionStorage.clear();
-			//
-			// const keycloakLogoutUrl =
-			// 	"/keycloak/realms/ohif/protocol/openid-connect/logout";
-			// const backToApp = encodeURIComponent(window.location.origin + "/");
-			//
-			// let fullKeycloakLogout = `${keycloakLogoutUrl}?post_logout_redirect_uri=${backToApp}`;
-			//
-			// if (idToken) {
-			// 	fullKeycloakLogout += `&id_token_hint=${idToken}`;
-			// } else {
-			// 	console.warn(
-			// 		"No ID Token found. Keycloak might show an error or prompt.",
-			// 	);
-			// }
-			//
-			// const proxyLogoutUrl =
-			// 	"/oauth2/sign_out?rd=" + encodeURIComponent(fullKeycloakLogout);
-			//
-			// window.location.href = proxyLogoutUrl;
+			const idToken = user?.id_token;
+
+			userAuthenticationService.reset();
+			localStorage.clear();
+			sessionStorage.clear();
+
+			const keycloakLogoutUrl =
+				"/keycloak/realms/ohif/protocol/openid-connect/logout";
+
+			let finalLogoutUrl;
+
+			if (idToken) {
+				const backToApp = encodeURIComponent(window.location.origin + "/");
+				finalLogoutUrl = `${keycloakLogoutUrl}?post_logout_redirect_uri=${backToApp}&id_token_hint=${idToken}`;
+			} else {
+				finalLogoutUrl = keycloakLogoutUrl;
+			}
+
+			const proxyLogoutUrl =
+				"/oauth2/sign_out?rd=" + encodeURIComponent(finalLogoutUrl);
+
+			window.location.href = proxyLogoutUrl;
 		},
 	});
 
