@@ -509,14 +509,26 @@ function WorkList({
     icon: 'power-off',
     title: t('Header:Logout'),
     onClick: () => {
-      // Clear all cookies
-      const cookies = document.cookie.split(";");
-      for (let cookie of cookies) {
-        const eqPos = cookie.indexOf("=");
+      console.log('Logout clicked');
+
+      // Clear all cookies more thoroughly
+      const cookies = document.cookie.split(';');
+      for (const cookie of cookies) {
+        const eqPos = cookie.indexOf('=');
         const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+
         if (name) {
-          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
-          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+          // Try multiple domain and path combinations to ensure deletion
+          const domain = window.location.hostname;
+          const domains = [domain, `.${domain}`];
+          const paths = ['/', ''];
+
+          domains.forEach(d => {
+            paths.forEach(p => {
+              document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${p};`;
+              document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${p}; domain=${d};`;
+            });
+          });
         }
       }
 
@@ -524,12 +536,19 @@ function WorkList({
       localStorage.clear();
       sessionStorage.clear();
 
+      // Optional: Clear IndexedDB if you're using it
+      if (window.indexedDB) {
+        indexedDB.databases().then(dbs => {
+          dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+        });
+      }
+
       if (appConfig.oidc && appConfig.oidc.length > 0) {
-        // For OIDC/Keycloak logout, use the OIDC route
+        // For OIDC/Keycloak logout
         navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
       } else {
-        // Simple logout - redirect to home
-        window.location.href = '/';
+        // Simple logout - use window.location.replace for better cleanup
+        window.location.replace('/');
       }
     },
   });

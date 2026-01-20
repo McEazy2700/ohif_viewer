@@ -73,6 +73,7 @@ function ViewerHeader({ appConfig }: withAppTypes<{ appConfig: AppTypes.Config }
       title: t('Header:Logout'),
       icon: 'power-off',
       onClick: async () => {
+        console.log('Logout clicked');
         // Clear all cookies
         const cookies = document.cookie.split(";");
         for (let cookie of cookies) {
