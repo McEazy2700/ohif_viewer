@@ -530,6 +530,9 @@ function WorkList({
 		icon: "power-off",
 		title: t("Header:Logout"),
 		onClick: () => {
+			const user = userAuthenticationService.getUser() as any;
+			const idToken = user?.id_token;
+
 			userAuthenticationService.reset();
 			localStorage.clear();
 			sessionStorage.clear();
@@ -537,7 +540,16 @@ function WorkList({
 			const keycloakLogoutUrl =
 				"/keycloak/realms/ohif/protocol/openid-connect/logout";
 			const backToApp = encodeURIComponent(window.location.origin + "/");
-			const fullKeycloakLogout = `${keycloakLogoutUrl}?post_logout_redirect_uri=${backToApp}`;
+
+			let fullKeycloakLogout = `${keycloakLogoutUrl}?post_logout_redirect_uri=${backToApp}`;
+
+			if (idToken) {
+				fullKeycloakLogout += `&id_token_hint=${idToken}`;
+			} else {
+				console.warn(
+					"No ID Token found. Keycloak might show an error or prompt.",
+				);
+			}
 
 			const proxyLogoutUrl =
 				"/oauth2/sign_out?rd=" + encodeURIComponent(fullKeycloakLogout);
