@@ -533,9 +533,14 @@ function WorkList({
 			userAuthenticationService.reset();
 			localStorage.clear();
 			sessionStorage.clear();
+
+			const keycloakLogoutUrl =
+				"/keycloak/realms/ohif/protocol/openid-connect/logout";
+			const backToApp = encodeURIComponent(window.location.origin + "/");
+			const fullKeycloakLogout = `${keycloakLogoutUrl}?post_logout_redirect_uri=${backToApp}`;
+
 			const proxyLogoutUrl =
-				"/oauth2/sign_out?rd=" +
-				encodeURIComponent(window.location.origin + "/");
+				"/oauth2/sign_out?rd=" + encodeURIComponent(fullKeycloakLogout);
 
 			window.location.href = proxyLogoutUrl;
 		},
