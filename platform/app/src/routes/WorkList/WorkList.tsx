@@ -94,7 +94,7 @@ function WorkList({
   const sortModifier = sortDirection === 'descending' ? 1 : -1;
   const defaultSortValues =
     shouldUseDefaultSort && canSort ? { sortBy: 'studyDate', sortDirection: 'ascending' } : {};
-  const { customizationService } = servicesManager.services;
+  const { customizationService, userAuthenticationService } = servicesManager.services;
 
   const sortedStudies = useMemo(() => {
     if (!canSort) {
@@ -508,48 +508,28 @@ function WorkList({
   menuOptions.push({
     icon: 'power-off',
     title: t('Header:Logout'),
-    onClick: () => {
-      console.log('Logout clicked');
+    onClick: async () => {
+      const user = (await userAuthenticationService.getUser()) as any;
+      const idToken = user?.id_token;
 
-      // Clear all cookies more thoroughly
-      const cookies = document.cookie.split(';');
-      for (const cookie of cookies) {
-        const eqPos = cookie.indexOf('=');
-        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
-
-        if (name) {
-          // Try multiple domain and path combinations to ensure deletion
-          const domain = window.location.hostname;
-          const domains = [domain, `.${domain}`];
-          const paths = ['/', ''];
-
-          domains.forEach(d => {
-            paths.forEach(p => {
-              document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${p};`;
-              document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${p}; domain=${d};`;
-            });
-          });
-        }
-      }
-
-      // Clear all storage
+      userAuthenticationService.reset();
       localStorage.clear();
       sessionStorage.clear();
 
-      // Optional: Clear IndexedDB if you're using it
-      if (window.indexedDB) {
-        indexedDB.databases().then(dbs => {
-          dbs.forEach(db => indexedDB.deleteDatabase(db.name));
-        });
+      const keycloakLogoutUrl = '/keycloak/realms/ohif/protocol/openid-connect/logout';
+
+      let finalLogoutUrl;
+
+      if (idToken) {
+        const backToApp = encodeURIComponent(window.location.origin + '/');
+        finalLogoutUrl = `${keycloakLogoutUrl}?post_logout_redirect_uri=${backToApp}&id_token_hint=${idToken}`;
+      } else {
+        finalLogoutUrl = keycloakLogoutUrl;
       }
 
-      if (appConfig.oidc && appConfig.oidc.length > 0) {
-        // For OIDC/Keycloak logout
-        navigate(`/logout?redirect_uri=${encodeURIComponent(window.location.href)}`);
-      } else {
-        // Simple logout - use window.location.replace for better cleanup
-        window.location.replace('/');
-      }
+      const proxyLogoutUrl = '/oauth2/sign_out?rd=' + encodeURIComponent(finalLogoutUrl);
+
+      window.location.href = proxyLogoutUrl;
     },
   });
 
@@ -589,7 +569,7 @@ function WorkList({
   );
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex h-screen flex-col bg-black">
       <Header
         isSticky
         menuOptions={menuOptions}
@@ -636,7 +616,7 @@ function WorkList({
           ) : (
             <div className="flex flex-col items-center justify-center pt-48">
               {appConfig.showLoadingIndicator && isLoadingData ? (
-                <LoadingIndicatorProgress className={'h-full w-full bg-background'} />
+                <LoadingIndicatorProgress className={'h-full w-full bg-black'} />
               ) : (
                 <EmptyStudies />
               )}
