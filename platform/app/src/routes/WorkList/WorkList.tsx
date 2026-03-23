@@ -167,9 +167,9 @@ function WorkList({
 
   // Set body style
   useEffect(() => {
-    document.body.classList.add('bg-black');
+    document.body.classList.add('bg-background');
     return () => {
-      document.body.classList.remove('bg-black');
+      document.body.classList.remove('bg-background');
     };
   }, []);
 
@@ -589,7 +589,7 @@ function WorkList({
   );
 
   return (
-    <div className="flex h-screen flex-col bg-black">
+    <div className="flex h-screen flex-col bg-background">
       <Header
         isSticky
         menuOptions={menuOptions}
@@ -636,7 +636,7 @@ function WorkList({
           ) : (
             <div className="flex flex-col items-center justify-center pt-48">
               {appConfig.showLoadingIndicator && isLoadingData ? (
-                <LoadingIndicatorProgress className={'h-full w-full bg-black'} />
+                <LoadingIndicatorProgress className={'h-full w-full bg-background'} />
               ) : (
                 <EmptyStudies />
               )}

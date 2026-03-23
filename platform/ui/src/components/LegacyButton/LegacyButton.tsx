@@ -35,7 +35,7 @@ const variants = {
     white:
       'text-white hover:bg-white hover:text-black active:opacity-80 focus:bg-white focus:text-black',
     black:
-      'text-black hover:bg-black hover:text-white focus:bg-black focus:text-white active:opacity-80',
+      'text-black hover:bg-background hover:text-white focus:bg-background focus:text-white active:opacity-80',
   },
   outlined: {
     default:
@@ -82,7 +82,7 @@ const defaultVariantBackGroundColor = {
     default: 'bg-transparent',
     primary: 'bg-transparent',
     secondary: 'bg-transparent',
-    black: 'bg-black',
+    black: 'bg-background',
     white: '',
   },
   contained: {
@@ -91,7 +91,7 @@ const defaultVariantBackGroundColor = {
     primaryDark: 'bg-primary-dark',
     secondary: 'bg-secondary-light',
     white: 'bg-white',
-    black: 'bg-black',
+    black: 'bg-background',
     light: 'bg-primary-light',
   },
   disabled: {
@@ -99,7 +99,7 @@ const defaultVariantBackGroundColor = {
     primary: 'bg-primary-main',
     secondary: 'bg-secondary-light',
     white: 'bg-white',
-    black: 'bg-black',
+    black: 'bg-background',
     light: 'bg-primary-light',
   },
 };

@@ -58,7 +58,7 @@ const closeIconWidth = 30;
 const gridHorizontalPadding = 10;
 const tabSpacerWidth = 2;
 
-const baseClasses = 'bg-black border-black justify-start box-content flex flex-col';
+const baseClasses = 'bg-background border-black justify-start box-content flex flex-col';
 
 const openStateIconName = {
   left: 'SidePanelCloseLeft',
@@ -111,7 +111,7 @@ const getTabClassNames = (
   isActiveTab: boolean,
   isTabDisabled: boolean
 ) =>
-  classnames('h-[28px] mb-[2px] cursor-pointer text-white bg-black', {
+  classnames('h-[28px] mb-[2px] cursor-pointer text-white bg-background', {
     'hover:text-primary': !isActiveTab && !isTabDisabled,
     'rounded-l': tabIndex % numColumns === 0,
     'rounded-r': (tabIndex + 1) % numColumns === 0 || tabIndex === numTabs - 1,
@@ -373,7 +373,7 @@ const SidePanel = ({
                   {tabIndex % numCols !== 0 && (
                     <div
                       className={classnames(
-                        'flex h-[28px] w-[2px] items-center bg-black',
+                        'flex h-[28px] w-[2px] items-center bg-background',
                         tabSpacerWidth
                       )}
                     >
@@ -448,7 +448,7 @@ const SidePanel = ({
         </div>
         <Separator
           orientation="horizontal"
-          className="bg-black"
+          className="bg-background"
           thickness="2px"
         />
       </>

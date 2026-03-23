@@ -8,7 +8,7 @@ const baseInputClasses =
 
 const transparentClasses = {
   true: 'bg-transparent',
-  false: 'bg-black',
+  false: 'bg-background',
 };
 
 const smallInputClasses = {
